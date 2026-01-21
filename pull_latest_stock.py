@@ -85,12 +85,18 @@ def clamp_years_ago(today: dt.date, years: int) -> dt.date:  # Compute a date "y
 def fetch_eod_history(session: requests.Session, api_key: str, symbol: str) -> List[Dict[str, Any]]:  # Fetch daily EOD history.
     url = build_url("/historical-price-eod/full", {"symbol": symbol, "apikey": api_key})  # Build EOD endpoint URL.
     data = http_get_json(session, url)  # Call the API and parse JSON.
-    if not isinstance(data, dict):  # Expect a dict with a "historical" field.
+    
+    # Handle both response formats: dict with "historical" field or direct list
+    if isinstance(data, dict):  # Response is a dict with a "historical" field.
+        hist = data.get("historical", [])  # Pull the historical list (may be empty).
+        if not isinstance(hist, list):  # Ensure historical is a list.
+            raise RuntimeError(f"Unexpected 'historical' type for {symbol}: {type(hist)}")  # Raise if wrong type.
+        return hist  # Return the raw list of daily bars.
+    elif isinstance(data, list):  # Response is directly a list of historical data.
+        return data  # Return the list directly.
+    else:  # Unexpected response type.
         raise RuntimeError(f"Unexpected payload type for {symbol}: {type(data)}")  # Raise if format is unexpected.
-    hist = data.get("historical", [])  # Pull the historical list (may be empty).
-    if not isinstance(hist, list):  # Ensure historical is a list.
-        raise RuntimeError(f"Unexpected 'historical' type for {symbol}: {type(hist)}")  # Raise if wrong type.
-    return hist  # Return the raw list of daily bars.
+
 
 def to_date(s: str) -> dt.date:  # Convert YYYY-MM-DD string to a date object.
     return dt.datetime.strptime(s, "%Y-%m-%d").date()  # Parse and return date.
