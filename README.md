@@ -6,20 +6,55 @@ AI-powered stock market analysis and trading agent.
 
 ```
 stock_market_agent/
-├── data/             # Data files
-├── models/           # Trained models and checkpoints
-├── tests/            # Unit tests
-├── scripts/          # Utility scripts
-├── outputs/          # Model outputs and results
-└── requirements.txt  # Python dependencies
+├── cred/                    # Credential files (not tracked in git)
+│   └── credentials.json     # API keys and secrets
+├── data/                    # Stock data CSV files
+├── models/                  # Trained models and checkpoints
+├── tests/                   # Unit tests
+├── scripts/                 # Utility scripts
+├── outputs/                 # Model outputs and results
+├── pull_latest_stock.py     # Fetch stock data from FMP API
+└── requirements.txt         # Python dependencies
 ```
 
 ## Setup
 
+1. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
+2. Configure API credentials:
+   - Copy `cred/credentials.json.example` to `cred/credentials.json`
+   - Add your Financial Modeling Prep API key to the credentials file
+
+```json
+{
+  "FMP_API_KEY": "your_api_key_here"
+}
+```
+
 ## Usage
 
-TBD
+### Fetch Stock Data
+
+Pull historical stock data from Financial Modeling Prep API:
+
+```bash
+python pull_latest_stock.py
+```
+
+Options:
+- `--years N`: Fetch N years of historical data (default: 5)
+- `--top-n N`: Number of companies to fetch (default: 5)
+- `--outdir PATH`: Output directory for CSV files (default: data)
+- `--cred-file PATH`: Path to credentials file (default: cred/credentials.json)
+- `--api-key KEY`: Override API key from command line
+- `--universe TICKERS`: Comma-separated list of tickers (default: AAPL,MSFT,NVDA,AMZN,GOOGL,META,TSLA)
+
+Example:
+```bash
+python pull_latest_stock.py --years 3 --top-n 7
+```
+
+The script will fetch stock data and save CSV files in the `data/` directory in NeuralProphet-ready format (ds, y columns).
