@@ -42,3 +42,6 @@ outputs/*
 # OS
 .DS_Store
 Thumbs.db
+
+# json
+*.json
