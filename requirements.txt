@@ -1,9 +1,12 @@
 # Core AI/ML libraries
-numpy>=1.24.0
-pandas>=2.0.0
+numpy>=1.24.0,<2.0.0
+pandas>=2.0.0,<2.2.0
 scikit-learn>=1.3.0
-torch>=2.0.0
+torch>=2.0.0,<2.6.0
 transformers>=4.30.0
+
+# Time series forecasting
+neuralprophet>=0.9.0
 
 # Data processing
 matplotlib>=3.7.0

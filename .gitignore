@@ -48,3 +48,6 @@ Thumbs.db
 
 # csv 
 *.csv
+
+# lightning logs
+lightning_logs/*

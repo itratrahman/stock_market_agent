@@ -58,3 +58,28 @@ python pull_latest_stock.py --years 3 --top-n 7
 ```
 
 The script will fetch stock data and save CSV files in the `data/` directory in NeuralProphet-ready format (ds, y columns).
+
+### Train Models
+
+Train NeuralProphet models on the stock data:
+
+```bash
+python train_models.py
+```
+
+Options:
+- `--data-dir PATH`: Directory containing stock CSV files (default: data)
+- `--model-dir PATH`: Directory to save trained models (default: models)
+- `--epochs N`: Number of training epochs (default: 100)
+- `--learning-rate RATE`: Learning rate (default: auto)
+- `--n-changepoints N`: Number of potential changepoints (default: 10)
+- `--yearly-seasonality`: Enable yearly seasonality (default: True)
+- `--verbose`: Show training progress
+- `--pattern GLOB`: Glob pattern for CSV files (default: *_daily_*.csv)
+
+Example:
+```bash
+python train_models.py --epochs 150 --verbose
+```
+
+The script will train a separate model for each stock and save them as PyTorch files in the `models/` directory.
