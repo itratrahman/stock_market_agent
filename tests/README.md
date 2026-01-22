@@ -1,16 +1,20 @@
 # Tests Directory
 
-This directory contains unit tests and integration tests for the project.
+This directory contains unit tests and integration tests for the stock market agent project.
 
-## Structure
+## Current Status
 
-Organize tests to mirror the source code structure:
+Test suite is under development. Planned test coverage:
+
+## Planned Structure
+
 ```
 tests/
-├── test_data_loader.py      # Tests for data loading utilities
-├── test_models.py            # Tests for model implementations
-├── test_preprocessing.py     # Tests for data preprocessing
-└── test_trading_agent.py     # Tests for trading logic
+├── test_pull_stock_data.py  # Tests for pull_latest_stock.py
+├── test_train_models.py      # Tests for train_models.py
+├── test_data_loader.py       # Tests for data loading utilities
+├── test_models.py            # Tests for model predictions
+└── test_integration.py       # End-to-end integration tests
 ```
 
 ## Running Tests

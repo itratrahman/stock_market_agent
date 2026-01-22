@@ -1,11 +1,18 @@
 # Data Directory
 
-This directory contains stock market data files downloaded from external sources.
+This directory contains stock market data files downloaded from Financial Modeling Prep API.
 
-## Structure
+## Current Data Files
 
-Stock data is stored as CSV files with the following naming convention:
-- `{SYMBOL}_daily_{N}y.csv` - Daily OHLCV data for N years
+- `AAPL_daily_5y.csv` - Apple Inc. (5 years daily data)
+- `AMZN_daily_5y.csv` - Amazon.com Inc. (5 years daily data)
+- `GOOGL_daily_5y.csv` - Alphabet Inc. (5 years daily data)
+- `MSFT_daily_5y.csv` - Microsoft Corporation (5 years daily data)
+- `NVDA_daily_5y.csv` - NVIDIA Corporation (5 years daily data)
+
+## File Naming Convention
+
+`{SYMBOL}_daily_{N}y.csv` - Daily OHLCV data for N years
 
 ## CSV Format
 

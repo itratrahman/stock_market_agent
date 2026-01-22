@@ -8,12 +8,14 @@ AI-powered stock market analysis and trading agent.
 stock_market_agent/
 ├── cred/                    # Credential files (not tracked in git)
 │   └── credentials.json     # API keys and secrets
-├── data/                    # Stock data CSV files
-├── models/                  # Trained models and checkpoints
+├── data/                    # Stock data CSV files (AAPL, AMZN, GOOGL, MSFT, NVDA)
+├── models/                  # Trained NeuralProphet models
+├── lightning_logs/          # Training logs organized by stock symbol
 ├── tests/                   # Unit tests
 ├── scripts/                 # Utility scripts
 ├── outputs/                 # Model outputs and results
 ├── pull_latest_stock.py     # Fetch stock data from FMP API
+├── train_models.py          # Train NeuralProphet models
 └── requirements.txt         # Python dependencies
 ```
 
@@ -83,3 +85,25 @@ python train_models.py --epochs 150 --verbose
 ```
 
 The script will train a separate model for each stock and save them as PyTorch files in the `models/` directory.
+
+### View Training Logs
+
+Training logs are organized by stock symbol in `lightning_logs/` directory:
+```
+lightning_logs/
+├── AAPL/
+├── AMZN/
+├── GOOGL/
+├── MSFT/
+└── NVDA/
+```
+
+Visualize training metrics with TensorBoard:
+```bash
+tensorboard --logdir=lightning_logs
+```
+
+Then open http://localhost:6006 to view:
+- Loss curves over training epochs
+- Model performance metrics
+- Training comparisons across different stocks
