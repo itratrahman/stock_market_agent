@@ -19,6 +19,10 @@ pandas-datareader>=0.10.0
 # API and HTTP
 requests>=2.31.0
 
+# News scraping
+newspaper4k>=0.9.0
+beautifulsoup4>=4.12.0
+
 # Utilities
 python-dotenv>=1.0.0
 jupyter>=1.0.0
