@@ -8,6 +8,11 @@ transformers>=4.30.0
 # Time series forecasting
 neuralprophet>=0.9.0
 
+# LangChain and LangGraph for agentic workflows
+langchain>=0.3.0
+langchain-ollama>=0.2.0
+langgraph>=0.2.0
+
 # Data processing
 matplotlib>=3.7.0
 seaborn>=0.12.0

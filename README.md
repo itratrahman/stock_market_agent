@@ -6,7 +6,9 @@ AI-powered stock market analysis and trading agent with news sentiment analysis 
 
 - 📈 **Stock Data Fetching**: Pull historical stock data from Financial Modeling Prep API
 - 🤖 **Time Series Forecasting**: Train NeuralProphet models for stock prediction
+- � **Forecast Generation**: Generate 30-day price forecasts using trained models
 - 📰 **News Article Retrieval**: Fetch and store news articles from NewsAPI.org
+- 🧠 **AI Analysis Agent**: LangGraph-based agentic workflow for investment recommendations
 - 💾 **Data Storage**: Organized storage of stock data, models, and news articles
 
 ## Project Structure
@@ -19,17 +21,20 @@ stock_market_agent/
 ├── data/                           # Stock data CSV files (AAPL, AMZN, GOOGL, MSFT, NVDA)
 ├── models/                         # Trained NeuralProphet models
 ├── lightning_logs/                 # Training logs organized by stock symbol
-├── outputs/                        # Model outputs and news articles
+├── outputs/                        # Model outputs, forecasts, and news articles
+│   ├── *_forecast_30d_*.csv       # 30-day price forecasts
+│   ├── stock_analysis_report_*.txt # AI agent analysis reports
 │   ├── AAPL/                      # Apple news articles
 │   ├── AMZN/                      # Amazon news articles
 │   ├── GOOGL/                     # Google news articles
 │   ├── MSFT/                      # Microsoft news articles
 │   └── NVDA/                      # NVIDIA news articles
 ├── tests/                          # Unit tests
-├── scripts/                        # Utility scripts
 ├── pull_latest_stock.py            # Fetch stock data from FMP API
 ├── train_models.py                 # Train NeuralProphet models
+├── generate_forecasts.py           # Generate price forecasts
 ├── fetch_news_newsapi.py           # Fetch news articles using NewsAPI
+├── stock_analysis_agent.py         # AI agent for investment analysis
 └── requirements.txt                # Python dependencies
 ```
 
@@ -75,6 +80,15 @@ Create `cred/newsapi_credentials.json`:
 ```
 
 Get your free API key at: https://newsapi.org/register
+
+#### LLM API (Ollama - Local)
+The stock analysis agent uses Ollama with Llama 3.2 for AI-powered analysis.
+
+1. Install Ollama: https://ollama.com/download
+2. Pull the model:
+```bash
+ollama pull llama3.2
+```
 
 ## Usage
 
@@ -208,3 +222,166 @@ Then open http://localhost:6006 to view:
 - Loss curves over training epochs
 - Model performance metrics
 - Training comparisons across different stocks
+
+### Generate Forecasts
+
+Generate 30-day price forecasts using trained models:
+
+```bash
+python generate_forecasts.py
+```
+
+Options:
+- `--data-dir PATH`: Directory containing stock CSV files (default: data)
+- `--model-dir PATH`: Directory containing trained models (default: models)
+- `--output-dir PATH`: Directory to save forecast CSV files (default: outputs)
+- `--periods N`: Number of days to forecast (default: 30)
+- `--pattern GLOB`: Glob pattern for CSV files (default: *_daily_*.csv)
+
+Example:
+```bash
+python generate_forecasts.py --periods 60
+```
+
+**Output Format:**
+Forecasts are saved as CSV files in `outputs/`:
+```
+outputs/
+├── AAPL_forecast_30d_20260121.csv
+├── MSFT_forecast_30d_20260121.csv
+└── ...
+```
+
+Each CSV contains:
+- `date` - Forecast date
+- `predicted_price` - Predicted closing price
+- `lower_bound` - Lower 95% confidence interval
+- `upper_bound` - Upper 95% confidence interval
+
+### Run Stock Analysis Agent
+
+Run the AI-powered analysis agent to get investment recommendations:
+
+```bash
+python stock_analysis_agent.py
+```
+
+**Prerequisites:**
+1. Ollama running with llama3.2 model installed
+2. Forecast CSV files in `outputs/` directory
+3. News JSON files in `outputs/{SYMBOL}/` directories
+
+**Agentic Flow:**
+
+```
+┌─────────────────────┐
+│  Analyze Forecast   │  Node 1: Read CSV, create summary (<300 chars)
+└─────────┬───────────┘
+          │
+          ▼
+┌─────────────────────┐
+│  Decision: Quality? │  Is forecast promising?
+└──────┬──────┬───────┘
+       │      │
+  YES  │      │ NO
+       ▼      ▼
+┌──────────┐ ┌────────────┐
+│Summarize │ │ Skip News  │  Node 2: Process or skip news
+│  News    │ │            │
+└────┬─────┘ └─────┬──────┘
+     │             │
+     └──────┬──────┘
+            ▼
+┌─────────────────────┐
+│  Investment Decision│  Node 3: INVEST / AVOID / NEUTRAL
+└─────────┬───────────┘
+          │
+          ▼
+        [END]
+```
+
+**Output:**
+The agent produces a tabulated report saved to:
+```
+outputs/stock_analysis_report_YYYYMMDD_HHMMSS.txt
+```
+
+**Report Contents:**
+- Summary table of all stocks with decisions
+- Detailed analysis for each stock:
+  - Forecast summary (<300 characters)
+  - News summary (<1000 characters)
+  - Investment decision (INVEST/AVOID/NEUTRAL)
+  - Decision reasoning (<200 characters)
+
+**Example Output:**
+```
+================================================================================
+STOCK ANALYSIS AGENT REPORT
+Generated: 2026-01-21 14:30:00
+================================================================================
+
+SUMMARY TABLE
+--------------------------------------------------------------------------------
+Symbol   Decision   Promising
+--------------------------------------------------------------------------------
+AAPL     INVEST     YES
+MSFT     NEUTRAL    YES
+NVDA     INVEST     YES
+AMZN     AVOID      NO
+GOOGL    NEUTRAL    YES
+--------------------------------------------------------------------------------
+
+DETAILED ANALYSIS
+================================================================================
+
+STOCK: AAPL
+----------------------------------------
+
+[FORECAST SUMMARY] (285 chars)
+Apple stock predicted to rise 2.3% over 30 days, from $249.56 to $255.30...
+
+[NEWS SUMMARY] (890 chars)
+Apple reported record iPhone sales in India with 14M units shipped...
+
+[INVESTMENT DECISION]
+Recommendation: INVEST
+
+[DECISION SUMMARY] (175 chars)
+Strong forecast with positive news sentiment. Record sales in key markets...
+================================================================================
+```
+
+## Complete Workflow
+
+Run the full pipeline:
+
+```bash
+# 1. Fetch latest stock data
+python pull_latest_stock.py
+
+# 2. Train forecasting models
+python train_models.py
+
+# 3. Generate price forecasts
+python generate_forecasts.py
+
+# 4. Fetch recent news articles
+python fetch_news_newsapi.py
+
+# 5. Run AI analysis agent
+python stock_analysis_agent.py
+```
+
+## Technologies Used
+
+- **NeuralProphet**: Time series forecasting with neural networks
+- **LangGraph**: Agentic workflow orchestration
+- **LangChain**: LLM integration framework
+- **Ollama + Llama 3.2**: Open-source LLM for analysis
+- **NewsAPI**: News article retrieval
+- **Pandas**: Data manipulation and analysis
+
+## License
+
+MIT License
