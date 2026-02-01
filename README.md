@@ -2,16 +2,16 @@
 
 AI-powered stock market analysis and trading agent with news sentiment analysis capabilities.
 
-## Features
+## 1. Features
 
 - 📈 **Stock Data Fetching**: Pull historical stock data from Financial Modeling Prep API
 - 🤖 **Time Series Forecasting**: Train NeuralProphet models for stock prediction
-- � **Forecast Generation**: Generate 30-day price forecasts using trained models
+- 📊 **Forecast Generation**: Generate 30-day price forecasts using trained models
 - 📰 **News Article Retrieval**: Fetch and store news articles from NewsAPI.org
 - 🧠 **AI Analysis Agent**: LangGraph-based agentic workflow for investment recommendations
 - 💾 **Data Storage**: Organized storage of stock data, models, and news articles
 
-## Project Structure
+## 2. Project Structure
 
 ```
 stock_market_agent/
@@ -38,17 +38,17 @@ stock_market_agent/
 └── requirements.txt                # Python dependencies
 ```
 
-## Setup
+## 3. Setup
 
-### 1. Install Dependencies
+### 3.1 Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Configure API Credentials
+### 3.2 Configure API Credentials
 
-#### Stock Data API (Financial Modeling Prep)
+#### 3.2.1 Stock Data API (Financial Modeling Prep)
 Create `cred/credentials.json` with your FMP API key:
 
 ```json
@@ -59,7 +59,7 @@ Create `cred/credentials.json` with your FMP API key:
 
 Get your API key at: https://site.financialmodelingprep.com/developer/docs
 
-#### News API (NewsAPI.org)
+#### 3.2.2 News API (NewsAPI.org)
 Set environment variable or create `cred/newsapi_credentials.json`:
 
 **Option A: Environment Variable (Recommended)**
@@ -81,7 +81,7 @@ Create `cred/newsapi_credentials.json`:
 
 Get your free API key at: https://newsapi.org/register
 
-#### LLM API (Ollama - Local)
+#### 3.2.3 LLM API (Ollama - Local)
 The stock analysis agent uses Ollama with Llama 3.2 for AI-powered analysis.
 
 1. Install Ollama: https://ollama.com/download
@@ -90,9 +90,9 @@ The stock analysis agent uses Ollama with Llama 3.2 for AI-powered analysis.
 ollama pull llama3.2
 ```
 
-## Usage
+## 4. Usage
 
-### Fetch Stock Data
+### 4.1 Fetch Stock Data
 
 Pull historical stock data from Financial Modeling Prep API:
 
@@ -115,7 +115,89 @@ python pull_latest_stock.py --years 3 --top-n 7
 
 The script will fetch stock data and save CSV files in the `data/` directory in NeuralProphet-ready format (ds, y columns).
 
-### Fetch News Articles
+### 4.2 Train Models
+
+Train NeuralProphet models on the stock data:
+
+```bash
+python train_models.py
+```
+
+Options:
+- `--data-dir PATH`: Directory containing stock CSV files (default: data)
+- `--model-dir PATH`: Directory to save trained models (default: models)
+- `--epochs N`: Number of training epochs (default: 100)
+- `--learning-rate RATE`: Learning rate (default: auto)
+- `--n-changepoints N`: Number of potential changepoints (default: 10)
+- `--yearly-seasonality`: Enable yearly seasonality (default: True)
+- `--verbose`: Show training progress
+- `--pattern GLOB`: Glob pattern for CSV files (default: *_daily_*.csv)
+
+Example:
+```bash
+python train_models.py --epochs 150 --verbose
+```
+
+The script will train a separate model for each stock and save them as PyTorch files in the `models/` directory.
+
+### 4.3 View Training Logs
+
+Training logs are organized by stock symbol in `lightning_logs/` directory:
+```
+lightning_logs/
+├── AAPL/
+├── AMZN/
+├── GOOGL/
+├── MSFT/
+└── NVDA/
+```
+
+Visualize training metrics with TensorBoard:
+```bash
+tensorboard --logdir=lightning_logs
+```
+
+Then open http://localhost:6006 to view:
+- Loss curves over training epochs
+- Model performance metrics
+- Training comparisons across different stocks
+
+### 4.4 Generate Forecasts
+
+Generate 30-day price forecasts using trained models:
+
+```bash
+python generate_forecasts.py
+```
+
+Options:
+- `--data-dir PATH`: Directory containing stock CSV files (default: data)
+- `--model-dir PATH`: Directory containing trained models (default: models)
+- `--output-dir PATH`: Directory to save forecast CSV files (default: outputs)
+- `--periods N`: Number of days to forecast (default: 30)
+- `--pattern GLOB`: Glob pattern for CSV files (default: *_daily_*.csv)
+
+Example:
+```bash
+python generate_forecasts.py --periods 60
+```
+
+**Output Format:**
+Forecasts are saved as CSV files in `outputs/`:
+```
+outputs/
+├── AAPL_forecast_30d_20260121.csv
+├── MSFT_forecast_30d_20260121.csv
+└── ...
+```
+
+Each CSV contains:
+- `date` - Forecast date
+- `predicted_price` - Predicted closing price
+- `lower_bound` - Lower 95% confidence interval
+- `upper_bound` - Upper 95% confidence interval
+
+### 4.5 Fetch News Articles
 
 Retrieve news articles for stock companies to support sentiment analysis using NewsAPI.org:
 
@@ -176,89 +258,7 @@ Each JSON file contains:
 }
 ```
 
-### Train Models
-
-Train NeuralProphet models on the stock data:
-
-```bash
-python train_models.py
-```
-
-Options:
-- `--data-dir PATH`: Directory containing stock CSV files (default: data)
-- `--model-dir PATH`: Directory to save trained models (default: models)
-- `--epochs N`: Number of training epochs (default: 100)
-- `--learning-rate RATE`: Learning rate (default: auto)
-- `--n-changepoints N`: Number of potential changepoints (default: 10)
-- `--yearly-seasonality`: Enable yearly seasonality (default: True)
-- `--verbose`: Show training progress
-- `--pattern GLOB`: Glob pattern for CSV files (default: *_daily_*.csv)
-
-Example:
-```bash
-python train_models.py --epochs 150 --verbose
-```
-
-The script will train a separate model for each stock and save them as PyTorch files in the `models/` directory.
-
-### View Training Logs
-
-Training logs are organized by stock symbol in `lightning_logs/` directory:
-```
-lightning_logs/
-├── AAPL/
-├── AMZN/
-├── GOOGL/
-├── MSFT/
-└── NVDA/
-```
-
-Visualize training metrics with TensorBoard:
-```bash
-tensorboard --logdir=lightning_logs
-```
-
-Then open http://localhost:6006 to view:
-- Loss curves over training epochs
-- Model performance metrics
-- Training comparisons across different stocks
-
-### Generate Forecasts
-
-Generate 30-day price forecasts using trained models:
-
-```bash
-python generate_forecasts.py
-```
-
-Options:
-- `--data-dir PATH`: Directory containing stock CSV files (default: data)
-- `--model-dir PATH`: Directory containing trained models (default: models)
-- `--output-dir PATH`: Directory to save forecast CSV files (default: outputs)
-- `--periods N`: Number of days to forecast (default: 30)
-- `--pattern GLOB`: Glob pattern for CSV files (default: *_daily_*.csv)
-
-Example:
-```bash
-python generate_forecasts.py --periods 60
-```
-
-**Output Format:**
-Forecasts are saved as CSV files in `outputs/`:
-```
-outputs/
-├── AAPL_forecast_30d_20260121.csv
-├── MSFT_forecast_30d_20260121.csv
-└── ...
-```
-
-Each CSV contains:
-- `date` - Forecast date
-- `predicted_price` - Predicted closing price
-- `lower_bound` - Lower 95% confidence interval
-- `upper_bound` - Upper 95% confidence interval
-
-### Run Stock Analysis Agent
+### 4.6 Run Stock Analysis Agent
 
 Run the AI-powered analysis agent to get investment recommendations:
 
@@ -352,7 +352,7 @@ Strong forecast with positive news sentiment. Record sales in key markets...
 ================================================================================
 ```
 
-## Complete Workflow
+## 5. Complete Workflow
 
 Run the full pipeline:
 
@@ -373,7 +373,7 @@ python fetch_news_newsapi.py
 python stock_analysis_agent.py
 ```
 
-## Technologies Used
+## 6. Technologies Used
 
 - **NeuralProphet**: Time series forecasting with neural networks
 - **LangGraph**: Agentic workflow orchestration
@@ -382,6 +382,6 @@ python stock_analysis_agent.py
 - **NewsAPI**: News article retrieval
 - **Pandas**: Data manipulation and analysis
 
-## License
+## 7. License
 
 MIT License
