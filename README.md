@@ -60,7 +60,11 @@ AI-powered stock market analysis and trading agent with news sentiment analysis 
 stock_market_agent/
 ├── cred/                           # Credential files (not tracked in git)
 │   ├── credentials.json            # FMP API key
-│   └── newsapi_credentials.json    # NewsAPI key
+│   ├── newsapi_credentials.json    # NewsAPI key
+│   └── airflow_config.json         # Airflow Python executable path
+├── dags/                           # Apache Airflow DAG definitions
+│   ├── stock_market_pipeline_dag.py # Main pipeline orchestration DAG
+│   └── README.md                   # DAG setup and configuration guide
 ├── data/                           # Stock data CSV files (AAPL, AMZN, GOOGL, MSFT, NVDA)
 ├── models/                         # Trained NeuralProphet models
 ├── lightning_logs/                 # Training logs organized by stock symbol
@@ -395,9 +399,11 @@ Strong forecast with positive news sentiment. Record sales in key markets...
 ================================================================================
 ```
 
-## 5. Complete Workflow
+## 5. Complete Workflow & Pipeline Orchestration
 
-Run the full pipeline:
+### 5.1 Manual Execution
+
+Run the full pipeline manually:
 
 ```bash
 # 1. Fetch latest stock data
@@ -415,6 +421,78 @@ python fetch_news_newsapi.py
 # 5. Run AI analysis agent
 python stock_analysis_agent.py
 ```
+
+### 5.2 Airflow Pipeline Orchestration
+
+For automated, production-grade execution, use the Apache Airflow DAG in `dags/stock_market_pipeline_dag.py`.
+
+**Features:**
+- ✅ Sequential execution with dependency management
+- ✅ Fail-fast: If any script fails, downstream tasks are skipped
+- ✅ Single concurrent run enforcement
+- ✅ Manual or scheduled triggers
+- ✅ Web UI for monitoring and logs
+
+**Setup:**
+
+1. **Configure Python Path:**
+   Create `cred/airflow_config.json`:
+   ```json
+   {
+     "python_executable": "C:/path/to/your/python.exe"
+   }
+   ```
+
+2. **Install & Initialize Airflow:**
+   ```bash
+   pip install apache-airflow
+   export AIRFLOW_HOME=~/airflow
+   airflow db init
+   ```
+
+3. **Link DAG & Start Services:**
+   ```bash
+   cp dags/stock_market_pipeline_dag.py $AIRFLOW_HOME/dags/
+   airflow webserver --port 8080 &
+   airflow scheduler &
+   ```
+
+4. **Trigger Pipeline:**
+   ```bash
+   # Via CLI
+   airflow dags trigger stock_market_pipeline
+   
+   # Or via Web UI at http://localhost:8080
+   ```
+
+**DAG Structure:**
+```
+┌─────────────────────────┐
+│ pull_latest_stock_data  │
+└───────────┬─────────────┘
+            │ (on success)
+            ▼
+┌─────────────────────────┐
+│ train_forecasting_models│
+└───────────┬─────────────┘
+            │ (on success)
+            ▼
+┌─────────────────────────┐
+│ generate_price_forecasts│
+└───────────┬─────────────┘
+            │ (on success)
+            ▼
+┌─────────────────────────┐
+│ fetch_news_articles     │
+└───────────┬─────────────┘
+            │ (on success)
+            ▼
+┌─────────────────────────┐
+│ run_stock_analysis_agent│
+└─────────────────────────┘
+```
+
+See `dags/README.md` for detailed configuration and scheduling options.
 
 ## 6. Technologies Used
 
