@@ -11,6 +11,49 @@ AI-powered stock market analysis and trading agent with news sentiment analysis 
 - 🧠 **AI Analysis Agent**: LangGraph-based agentic workflow for investment recommendations
 - 💾 **Data Storage**: Organized storage of stock data, models, and news articles
 
+**Pipeline Diagram:**
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         STOCK MARKET AGENT PIPELINE                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────┐
+│  1. Pull Stock Data │  pull_latest_stock.py
+│  (FMP API → CSV)    │  Fetch 5yr OHLCV data for AAPL, MSFT, NVDA, AMZN, GOOGL
+└─────────┬───────────┘
+          │ data/*.csv (ds, y format)
+          ▼
+┌─────────────────────┐
+│  2. Train Models    │  train_models.py
+│  (CSV → Model)      │  Train NeuralProphet model per stock (100 epochs)
+└─────────┬───────────┘
+          │ models/*_neuralprophet
+          ▼
+┌─────────────────────┐
+│  3. Gen Forecasts   │  generate_forecasts.py
+│  (Model → Forecast) │  Predict next 30 days with confidence intervals
+└─────────┬───────────┘
+          │ outputs/*_forecast_30d_*.csv
+          ▼
+┌─────────────────────┐
+│  4. Fetch News      │  fetch_news_newsapi.py
+│  (NewsAPI → JSON)   │  Get recent articles + full text extraction
+└─────────┬───────────┘
+          │ outputs/{SYMBOL}/*_news_newsapi_*.json
+          ▼
+┌─────────────────────┐
+│  5. AI Agent        │  stock_analysis_agent.py
+│  (LangGraph + LLM)  │  Analyze forecasts + news → Investment decisions
+└─────────┬───────────┘
+          │
+          ▼
+┌─────────────────────┐
+│  📊 ANALYSIS REPORT │  outputs/stock_analysis_report_*.txt
+│  INVEST/AVOID/HOLD  │  Tabulated results + detailed reasoning
+└─────────────────────┘
+```
+
 ## 2. Project Structure
 
 ```
