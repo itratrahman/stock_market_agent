@@ -6,11 +6,16 @@ This directory contains Apache Airflow DAG definitions for orchestrating the sto
 
 **File:** `stock_market_pipeline_dag.py`
 
-A sequential pipeline that runs all 5 stages of the stock market analysis workflow. If any stage fails, the pipeline safely exits and skips downstream tasks.
+A sequential pipeline that runs all 6 stages of the stock market analysis workflow. If any stage fails, the pipeline safely exits and skips downstream tasks.
 
 ### Pipeline Stages
 
 ```
+┌─────────────────────────┐
+│ 0. cleanup.py           │  Clean data/, models/, outputs/ (keeps READMEs)
+└───────────┬─────────────┘
+            │ (on success)
+            ▼
 ┌─────────────────────────┐
 │ 1. pull_latest_stock.py │  Fetch 5yr OHLCV data from FMP API
 └───────────┬─────────────┘
@@ -42,6 +47,7 @@ A sequential pipeline that runs all 5 stages of the stock market analysis workfl
 - **Skip Downstream:** Failed tasks cause all downstream tasks to be skipped
 - **No Retries:** `retries=0` ensures immediate failure notification
 - **Single Run:** `max_active_runs=1` prevents concurrent execution
+- **Clean State:** Cleanup runs first to ensure fresh data each run
 
 ### Setup
 

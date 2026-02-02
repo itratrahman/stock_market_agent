@@ -468,6 +468,11 @@ For automated, production-grade execution, use the Apache Airflow DAG in `dags/s
 **DAG Structure:**
 ```
 ┌─────────────────────────┐
+│ cleanup_previous_data   │  Cleans data/, models/, outputs/ (keeps READMEs)
+└───────────┬─────────────┘
+            │ (on success)
+            ▼
+┌─────────────────────────┐
 │ pull_latest_stock_data  │
 └───────────┬─────────────┘
             │ (on success)

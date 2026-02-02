@@ -109,6 +109,27 @@ with DAG(
 ) as dag:
     
     # =========================================================================
+    # TASK 0: CLEANUP PREVIOUS RUN DATA
+    # =========================================================================
+    # Cleans up data/, models/, and outputs/ directories before starting.
+    # Preserves README.md files. Uses --confirm flag for actual deletion.
+    
+    cleanup_data = BashOperator(
+        task_id="cleanup_previous_data",  # Unique task identifier.
+        bash_command=f"cd {PROJECT_DIR} && {PYTHON_EXECUTABLE} cleanup.py --confirm",
+        doc_md="""
+        ### Cleanup Previous Run Data
+        
+        Removes all files and directories from data/, models/, and outputs/
+        folders to ensure a clean state before running the pipeline.
+        
+        **Script:** `cleanup.py`
+        **Targets:** `data/`, `models/`, `outputs/`
+        **Preserves:** README.md files in each directory
+        """,
+    )
+    
+    # =========================================================================
     # TASK 1: PULL LATEST STOCK DATA
     # =========================================================================
     # Fetches 5 years of daily OHLCV data from Financial Modeling Prep API.
@@ -217,4 +238,4 @@ with DAG(
     # Define the execution order using bitshift operators.
     # If any task fails, downstream tasks are automatically skipped.
     
-    pull_stock_data >> train_models >> generate_forecasts >> fetch_news >> run_analysis_agent
+    cleanup_data >> pull_stock_data >> train_models >> generate_forecasts >> fetch_news >> run_analysis_agent
