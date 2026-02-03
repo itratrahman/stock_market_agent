@@ -1,5 +1,12 @@
 # Stock Market Agent
 
+![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
+![PyTorch](https://img.shields.io/badge/pytorch-latest-red.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)
+![Docker](https://img.shields.io/badge/docker-ready-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)
+
 AI-powered stock market analysis and trading agent with news sentiment analysis capabilities.
 
 ## 1. Features
@@ -499,15 +506,6 @@ For automated, production-grade execution, use the Apache Airflow DAG in `dags/s
 
 See `dags/README.md` for detailed configuration and scheduling options.
 
-## 6. Technologies Used
-
-- **NeuralProphet**: Time series forecasting with neural networks
-- **LangGraph**: Agentic workflow orchestration
-- **LangChain**: LLM integration framework
-- **Ollama + Llama 3.2**: Open-source LLM for analysis
-- **NewsAPI**: News article retrieval
-- **Pandas**: Data manipulation and analysis
-
-## 7. License
+## 6. License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
