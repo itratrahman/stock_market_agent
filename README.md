@@ -510,4 +510,4 @@ See `dags/README.md` for detailed configuration and scheduling options.
 
 ## 7. License
 
-MIT License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
