@@ -23,10 +23,12 @@ data/processed/*
 # Models
 models/*
 !models/.gitkeep
+!models/README.md
 
 # Outputs
 outputs/*
 !outputs/.gitkeep
+!outputs/README.md
 
 # Environment
 .env

@@ -1,11 +1,13 @@
 # Stock Market Agent
 
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
-![PyTorch](https://img.shields.io/badge/pytorch-latest-red.svg)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)
-![Docker](https://img.shields.io/badge/docker-ready-blue.svg)
+![NeuralProphet](https://img.shields.io/badge/NeuralProphet-forecasting-orange.svg)
+![LangChain](https://img.shields.io/badge/LangChain-latest-green.svg)
+![LangGraph](https://img.shields.io/badge/LangGraph-agentic-purple.svg)
+![Ollama](https://img.shields.io/badge/Ollama-Llama3.2-blue.svg)
+![Airflow](https://img.shields.io/badge/Airflow-pipeline-red.svg)
+![Pandas](https://img.shields.io/badge/Pandas-data-lightblue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)
 
 AI-powered stock market analysis and trading agent with news sentiment analysis capabilities.
 
